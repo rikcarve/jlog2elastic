@@ -12,10 +12,12 @@ public class SmartFileReader {
     private File file;
     boolean stop = false;
     NewLinesListener listener = null;
+    long interval;
 
-    public SmartFileReader(String filePath, long position) throws IOException {
+    public SmartFileReader(String filePath, long position, long interval) throws IOException {
         file = new File(filePath);
         this.position = position;
+        this.interval = interval;
     }
 
     public void setListener(NewLinesListener listener) {
