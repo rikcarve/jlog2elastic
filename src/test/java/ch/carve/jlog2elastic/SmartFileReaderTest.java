@@ -8,9 +8,10 @@ public class SmartFileReaderTest {
 
     @Test
     public void readTest() throws IOException {
-        SmartFileReader reader = new SmartFileReader("src/test/resources/test.log", 0, 200);
+        SmartFileReader reader = new SmartFileReader("src/test/resources/test.log", 0, 200, 3);
         reader.setListener((lines, pos) -> {
             lines.stream().forEach(line -> System.out.println(line));
+            System.out.println("Filepos: " + pos);
             reader.stop();
         });
         reader.run();

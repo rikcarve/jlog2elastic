@@ -8,4 +8,3 @@
 13:01:29.622  [XNIO-1 I/O-3] DEBUG o.x.nio - Started channel thread 'XNIO-1 I/O-3', selector sun.nio.ch.WindowsSelectorImpl@1a2e8aff
 13:01:29.623  [XNIO-1 Accept] DEBUG o.x.nio - Started channel thread 'XNIO-1 Accept', selector sun.nio.ch.WindowsSelectorImpl@363a4be3
 13:01:29.623  [main] DEBUG i.undertow - Configuring listener with protocol HTTP for interface 0.0.0.0 and port 8080
-13:01:29.623  [main] DEBUG i.undertow - Configuring listener with protocol HTTP for interface 0.0.0.0 and port 8080
