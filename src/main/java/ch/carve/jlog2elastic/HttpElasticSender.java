@@ -13,6 +13,7 @@ import okhttp3.RequestBody;
 
 public class HttpElasticSender {
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+
     private OkHttpClient client;
     private String authToken;
 
@@ -27,11 +28,10 @@ public class HttpElasticSender {
                 .add("application", "test")
                 .add("logmessage", message)
                 .build().toString();
-        RequestBody body = RequestBody.create(JSON, json);
         Request request = new Request.Builder()
                 .url("http://localhost:9200/log/log")
                 .header("Authorization", "Basic " + authToken)
-                .post(body)
+                .post(RequestBody.create(JSON, json))
                 .build();
         try {
             client.newCall(request).execute();
