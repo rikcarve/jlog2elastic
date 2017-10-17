@@ -8,6 +8,7 @@ public class HttpElasticSenderTest {
 
     @Test
     public void testSend() throws IOException {
-        HttpElasticSender.send("Hallo");
+        HttpElasticSender sender = new HttpElasticSender("user", "password");
+        sender.send("Test");
     }
 }

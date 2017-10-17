@@ -1,9 +1,10 @@
 package ch.carve.jlog2elastic;
 
-import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
-
 import java.io.IOException;
 import java.time.OffsetDateTime;
+import java.util.Base64;
+
+import javax.json.Json;
 
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -12,22 +13,31 @@ import okhttp3.RequestBody;
 
 public class HttpElasticSender {
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+    private OkHttpClient client;
+    private String authToken;
 
-    public static void send(String message) throws IOException {
-        OkHttpClient client = new OkHttpClient();
+    public HttpElasticSender(String username, String password) {
+        client = new OkHttpClient();
+        authToken = Base64.getEncoder().encodeToString((username + ":" + password).getBytes());
+    }
 
-        String json = jsonBuilder()
-                .startObject()
-                .field("@datetime", OffsetDateTime.now().toString())
-                .field("application", "test")
-                .field("logmessage", message)
-                .endObject().string();
+    public void send(String message) {
+        String json = Json.createObjectBuilder()
+                .add("@datetime", OffsetDateTime.now().toString())
+                .add("application", "test")
+                .add("logmessage", message)
+                .build().toString();
         RequestBody body = RequestBody.create(JSON, json);
         Request request = new Request.Builder()
                 .url("http://localhost:9200/log/log")
+                .header("Authorization", "Basic " + authToken)
                 .post(body)
                 .build();
-        System.out.println(client.newCall(request).execute());
+        try {
+            client.newCall(request).execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }
