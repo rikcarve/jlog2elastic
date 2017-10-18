@@ -7,12 +7,17 @@ import java.util.List;
 
 import javax.json.Json;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 
 public class HttpElasticSender {
+    private static final Logger logger = LoggerFactory.getLogger(HttpElasticSender.class);
+
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
     private OkHttpClient client;
@@ -43,10 +48,14 @@ public class HttpElasticSender {
                 .header("Authorization", "Basic " + authToken)
                 .post(RequestBody.create(JSON, builder.toString()))
                 .build();
+        sendHttpRequest(request);
+    }
+
+    private void sendHttpRequest(Request request) {
         try {
             client.newCall(request).execute();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Bulk request exception", e);
         }
     }
 
@@ -57,11 +66,7 @@ public class HttpElasticSender {
                 .header("Authorization", "Basic " + authToken)
                 .post(RequestBody.create(JSON, json))
                 .build();
-        try {
-            client.newCall(request).execute();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        sendHttpRequest(request);
     }
 
     private String createJsonFromMessage(String message) {

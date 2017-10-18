@@ -1,13 +1,16 @@
 package ch.carve.jlog2elastic;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class SmartFileReader {
+    private static final Logger logger = LoggerFactory.getLogger(SmartFileReader.class);
 
     private long position;
     private File file;
@@ -40,37 +43,37 @@ public class SmartFileReader {
                 }
                 sleep();
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.error("Excpetion occurred: ", e);
                 stop();
             }
         }
     }
 
-    private void readFile() throws FileNotFoundException, IOException {
-        RandomAccessFile raf = new RandomAccessFile(file, "r");
-        raf.seek(position);
-        String line = null;
-        List<String> lines = new ArrayList<>();
-        int count = 0;
-        while ((line = raf.readLine()) != null) {
-            lines.add(line);
-            if (++count >= bulkSize) {
-                position = raf.getFilePointer();
-                listener.onNewLines(lines, position);
-                lines.clear();
-                count = 0;
+    private void readFile() throws IOException {
+        try (RandomAccessFile raf = new RandomAccessFile(file, "r")) {
+            raf.seek(position);
+            String line = null;
+            List<String> lines = new ArrayList<>();
+            int count = 0;
+            while ((line = raf.readLine()) != null) {
+                lines.add(line);
+                if (++count >= bulkSize) {
+                    position = raf.getFilePointer();
+                    listener.onNewLines(lines, position);
+                    lines.clear();
+                    count = 0;
+                }
             }
+            position = raf.getFilePointer();
+            listener.onNewLines(lines, position);
         }
-        position = raf.getFilePointer();
-        listener.onNewLines(lines, position);
-        raf.close();
     }
 
     private void sleep() {
         try {
             Thread.sleep(interval);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            logger.info("Interrupted, stop", e);
             stop();
             Thread.currentThread().interrupt();
         }
