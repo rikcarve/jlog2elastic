@@ -19,7 +19,7 @@ public class SmartFileReader {
     private long interval;
     private int bulkSize;
 
-    public SmartFileReader(String filePath, long position, long interval, int bulkSize) throws IOException {
+    public SmartFileReader(String filePath, long position, long interval, int bulkSize) {
         file = new File(filePath);
         this.position = position;
         this.interval = interval;
