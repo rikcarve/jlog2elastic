@@ -22,8 +22,12 @@ public class HttpElasticSender {
 
     private OkHttpClient client;
     private String authToken;
+    private String index;
+    private String url;
 
-    public HttpElasticSender(String username, String password) {
+    public HttpElasticSender(String url, String username, String password, String index) {
+        this.url = url;
+        this.index = index;
         client = new OkHttpClient();
         authToken = Base64.getEncoder().encodeToString((username + ":" + password).getBytes());
     }
@@ -33,7 +37,7 @@ public class HttpElasticSender {
         for (String message : messages) {
             String header = Json.createObjectBuilder()
                     .add("index", Json.createObjectBuilder()
-                            .add("_index", "log")
+                            .add("_index", index)
                             .add("_type", "log")
                             .build())
                     .build().toString();
@@ -44,7 +48,7 @@ public class HttpElasticSender {
             builder.append(System.lineSeparator());
         }
         Request request = new Request.Builder()
-                .url("http://localhost:9200/_bulk")
+                .url(url + "/_bulk")
                 .header("Authorization", "Basic " + authToken)
                 .post(RequestBody.create(JSON, builder.toString()))
                 .build();
@@ -57,16 +61,6 @@ public class HttpElasticSender {
         } catch (IOException e) {
             logger.error("Bulk request exception", e);
         }
-    }
-
-    public void send(String message) {
-        String json = createJsonFromMessage(message);
-        Request request = new Request.Builder()
-                .url("http://localhost:9200/log/log")
-                .header("Authorization", "Basic " + authToken)
-                .post(RequestBody.create(JSON, json))
-                .build();
-        sendHttpRequest(request);
     }
 
     private String createJsonFromMessage(String message) {

@@ -14,9 +14,9 @@ public class SmartFileReader {
 
     private long position;
     private File file;
-    boolean stop = false;
-    NewLinesListener listener = null;
-    long interval;
+    private boolean stop = false;
+    private NewLinesListener listener = null;
+    private long interval;
     private int bulkSize;
 
     public SmartFileReader(String filePath, long position, long interval, int bulkSize) throws IOException {
