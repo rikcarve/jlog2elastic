@@ -11,7 +11,7 @@ public class Log2Elastic {
 
     public static void main(String[] args) throws IOException {
         HttpElasticSender sender = new HttpElasticSender("http://localhost:9200", "user", "password", "log");
-        SmartFileReader reader = new SmartFileReader("src/test/resources/test.log", 0, 200, 10);
+        SmartFileReader reader = new SmartFileReader("src/test/resources/test.log", 0, 1000, 100);
         reader.setListener((lines, pos) -> sender.send(lines));
         logger.info("Start...");
         reader.run();
