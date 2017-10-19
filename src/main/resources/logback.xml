@@ -3,7 +3,7 @@
 <configuration>
 
   <appender name="FILE" class="ch.qos.logback.core.FileAppender">
-    <file>jlog2elastic.log</file>
+    <file>target/jlog2elastic.log</file>
     <encoder>
       <pattern>%d{HH:mm:ss.SSS} %X{UUID} [%thread] %-5level %logger{5} - %msg%n</pattern>
     </encoder>
