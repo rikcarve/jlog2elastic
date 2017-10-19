@@ -2,6 +2,7 @@ package ch.carve.jlog2elastic;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,9 +19,11 @@ public class Log2Elastic {
         YamlReader yaml = new YamlReader(new FileReader("src/test/resources/config.yml"));
         Config config = yaml.read(Config.class);
 
-        HttpElasticSender sender = new HttpElasticSender(config.getUrl(), config.getUsername(), config.getPassword(), config.getIndex(), config.getLogfiles().get(0).getApplication());
+        HttpElasticSender sender = new HttpElasticSender(config.getUrl(), config.getUsername(), config.getPassword(), config.getIndex());
         SmartFileReader reader = new SmartFileReader(config.getLogfiles().get(0).getPath(), 0, config.getInterval(), config.getBulkSize());
-        reader.setListener((lines, pos) -> sender.send(lines));
+        LineParser parser = new LineParser(config.getLogfiles().get(0).getApplication(), config.getLogfiles().get(0).getTimeFormat());
+
+        reader.setListener((lines, pos) -> sender.send(lines.stream().map(parser::parse).collect(Collectors.toList())));
 
         logger.info("Start...");
         reader.run();

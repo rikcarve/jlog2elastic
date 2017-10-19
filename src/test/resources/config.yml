@@ -8,3 +8,4 @@ index: log
 logfiles:
   - application: undertow
     path: src/test/resources/test.log
+    timeFormat: HH:mm:ss.SSS

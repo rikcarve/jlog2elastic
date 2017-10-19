@@ -1,7 +1,6 @@
 package ch.carve.jlog2elastic;
 
 import java.io.IOException;
-import java.time.OffsetDateTime;
 import java.util.Base64;
 import java.util.List;
 
@@ -24,19 +23,17 @@ public class HttpElasticSender {
     private String authToken;
     private String index;
     private String url;
-    private String application;
 
-    public HttpElasticSender(String url, String username, String password, String index, String application) {
+    public HttpElasticSender(String url, String username, String password, String index) {
         this.url = url;
         this.index = index;
-        this.application = application;
         client = new OkHttpClient();
         authToken = Base64.getEncoder().encodeToString((username + ":" + password).getBytes());
     }
 
-    public boolean send(List<String> messages) {
+    public boolean send(List<LogMessage> messages) {
         StringBuilder builder = new StringBuilder();
-        for (String message : messages) {
+        for (LogMessage message : messages) {
             String header = Json.createObjectBuilder()
                     .add("index", Json.createObjectBuilder()
                             .add("_index", index)
@@ -66,11 +63,11 @@ public class HttpElasticSender {
         return false;
     }
 
-    private String createJsonFromMessage(String message) {
+    private String createJsonFromMessage(LogMessage message) {
         return Json.createObjectBuilder()
-                .add("@datetime", OffsetDateTime.now().toString())
-                .add("application", application)
-                .add("logmessage", message)
+                .add("@datetime", message.getDatetime().toString())
+                .add("application", message.getApplication())
+                .add("logmessage", message.getLogMessage())
                 .build().toString();
     }
 

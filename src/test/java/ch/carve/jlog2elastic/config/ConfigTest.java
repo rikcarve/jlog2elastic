@@ -16,5 +16,6 @@ public class ConfigTest {
         YamlReader reader = new YamlReader(new FileReader("src/test/resources/config.yml"));
         Config config = reader.read(Config.class);
         assertEquals("user", config.getUsername());
+        assertEquals("HH:mm:ss.SSS", config.getLogfiles().get(0).getTimeFormat());
     }
 }
