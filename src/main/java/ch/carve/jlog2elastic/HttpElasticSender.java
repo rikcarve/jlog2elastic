@@ -24,10 +24,12 @@ public class HttpElasticSender {
     private String authToken;
     private String index;
     private String url;
+    private String application;
 
-    public HttpElasticSender(String url, String username, String password, String index) {
+    public HttpElasticSender(String url, String username, String password, String index, String application) {
         this.url = url;
         this.index = index;
+        this.application = application;
         client = new OkHttpClient();
         authToken = Base64.getEncoder().encodeToString((username + ":" + password).getBytes());
     }
@@ -66,7 +68,7 @@ public class HttpElasticSender {
     private String createJsonFromMessage(String message) {
         return Json.createObjectBuilder()
                 .add("@datetime", OffsetDateTime.now().toString())
-                .add("application", "test")
+                .add("application", application)
                 .add("logmessage", message)
                 .build().toString();
     }

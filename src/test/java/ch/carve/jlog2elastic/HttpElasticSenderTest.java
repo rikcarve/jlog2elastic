@@ -9,7 +9,7 @@ public class HttpElasticSenderTest {
 
     @Test
     public void testSendBulk() throws IOException {
-        HttpElasticSender sender = new HttpElasticSender("http://localhost:9200", "user", "password", "log");
+        HttpElasticSender sender = new HttpElasticSender("http://localhost:9200", "user", "password", "log", "Test");
         sender.send(Arrays.asList("Test", "Test2"));
     }
 
