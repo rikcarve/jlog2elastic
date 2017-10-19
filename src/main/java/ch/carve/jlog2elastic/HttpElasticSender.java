@@ -34,7 +34,7 @@ public class HttpElasticSender {
         authToken = Base64.getEncoder().encodeToString((username + ":" + password).getBytes());
     }
 
-    public void send(List<String> messages) {
+    public boolean send(List<String> messages) {
         StringBuilder builder = new StringBuilder();
         for (String message : messages) {
             String header = Json.createObjectBuilder()
@@ -54,15 +54,16 @@ public class HttpElasticSender {
                 .header("Authorization", "Basic " + authToken)
                 .post(RequestBody.create(JSON, builder.toString()))
                 .build();
-        sendHttpRequest(request);
+        return sendHttpRequest(request);
     }
 
-    private void sendHttpRequest(Request request) {
+    private boolean sendHttpRequest(Request request) {
         try {
-            client.newCall(request).execute();
+            return client.newCall(request).execute().isSuccessful();
         } catch (IOException e) {
             logger.error("Bulk request exception", e);
         }
+        return false;
     }
 
     private String createJsonFromMessage(String message) {

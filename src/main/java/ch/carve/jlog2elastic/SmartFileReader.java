@@ -58,14 +58,21 @@ public class SmartFileReader {
             while ((line = raf.readLine()) != null) {
                 lines.add(line);
                 if (++count >= bulkSize) {
-                    position = raf.getFilePointer();
-                    listener.onNewLines(lines, position);
+                    notify(raf, lines);
                     lines.clear();
                     count = 0;
                 }
             }
-            position = raf.getFilePointer();
-            listener.onNewLines(lines, position);
+            notify(raf, lines);
+        }
+    }
+
+    private void notify(RandomAccessFile raf, List<String> lines) throws IOException {
+        long newPosition = raf.getFilePointer();
+        if (listener.onNewLines(lines, newPosition)) {
+            position = newPosition;
+        } else {
+            throw new IOException("Notification failed");
         }
     }
 

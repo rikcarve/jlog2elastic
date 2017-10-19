@@ -13,6 +13,7 @@ public class SmartFileReaderTest {
             lines.stream().forEach(line -> System.out.println(line));
             System.out.println("Filepos: " + pos);
             reader.stop();
+            return false;
         });
         reader.run();
     }
